@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "libxdp.h": "c",
+        "stddef.h": "c"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/bartek/L-Acoustics/xdp/test",
+            "binaryPath": "/home/bartek/L-Acoustics/xdp/test/loader",
+            "binaryArgs": []
+        }
+    ],
+    "editor.formatOnSave": false
+}
