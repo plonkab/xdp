@@ -5,14 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Loader",
+            "name": "Simple XDP",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/loader",
+            "program": "${workspaceRoot}/simple_xdp_user",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "environment": [],
+            "environment": [
+                {
+                    "name": "LIBXDP_SKIP_DISPATCHER",
+                    "value": "1"
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb.sh",

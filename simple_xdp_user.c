@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     struct xdp_program *prog;
     int err;
 
-    prog = xdp_program__open_file("prog.o", "xdp", NULL);
+    prog = xdp_program__open_file("simple_xdp_kern.o", "xdp", NULL);
     err = xdp_program__attach(prog, IFINDEX, XDP_MODE_UNSPEC, 0);
 
     if (!err)

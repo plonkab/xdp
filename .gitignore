@@ -1,3 +1,6 @@
-loader
-prog.o
-lib/install/
+*
+!*.h
+!*.c
+!Makefile
+!common/
+!.vscode/launch.json
