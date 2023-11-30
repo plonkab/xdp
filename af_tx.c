@@ -13,8 +13,8 @@
 
 #include <xdp/xsk.h>
 #include <linux/if_link.h>
+#include <net/if.h>
 
-#define INTERFACE_INDEX 2
 #define INTERFACE_NAME "lo"
 #define INTERFACE_QUEUE_INDEX 0
 #define NUM_FRAMES 4096
@@ -50,6 +50,8 @@ struct xsk_socket_info
     uint32_t outstanding_tx;
 };
 
+int interface_index;
+
 static struct xsk_umem_info *configure_xsk_umem(void *buffer, uint64_t size);
 static struct xsk_socket_info *xsk_configure_socket(struct xsk_umem_info *umem);
 static uint64_t xsk_alloc_umem_frame(struct xsk_socket_info *xsk);
@@ -61,6 +63,10 @@ static void complete_tx(struct xsk_socket_info *xsk);
 int main(int argc, char *argv[])
 {
     void *packet_buffer;
+
+    if (!(interface_index = if_nametoindex(INTERFACE_NAME))) {
+        perror("Failed to get device index");
+    }
 
     struct rlimit rlim = {RLIM_INFINITY, RLIM_INFINITY};
     if (setrlimit(RLIMIT_MEMLOCK, &rlim))
@@ -178,7 +184,7 @@ static struct xsk_socket_info *xsk_configure_socket(struct xsk_umem_info *umem)
         goto error_exit;
 
     /* Getting the program ID must be after the xdp_socket__create() call */
-    if (bpf_xdp_query_id(INTERFACE_INDEX, XDP_FLAGS, &prog_id))
+    if (bpf_xdp_query_id(interface_index, XDP_FLAGS, &prog_id))
         goto error_exit;
 
     for (i = 0; i < NUM_FRAMES; i++)
