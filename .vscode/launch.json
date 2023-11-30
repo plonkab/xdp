@@ -77,7 +77,9 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/af_tx",
-            "args": [],
+            "args": [
+                "lo"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [

@@ -15,7 +15,6 @@
 #include <linux/if_link.h>
 #include <net/if.h>
 
-#define INTERFACE_NAME "lo"
 #define INTERFACE_QUEUE_INDEX 0
 #define NUM_FRAMES 4096
 #define XSK_FRAME_SIZE XSK_UMEM__DEFAULT_FRAME_SIZE
@@ -50,6 +49,7 @@ struct xsk_socket_info
     uint32_t outstanding_tx;
 };
 
+char interface_name[10];
 int interface_index;
 
 static struct xsk_umem_info *configure_xsk_umem(void *buffer, uint64_t size);
@@ -62,10 +62,19 @@ static void complete_tx(struct xsk_socket_info *xsk);
 
 int main(int argc, char *argv[])
 {
-    void *packet_buffer;
+    if (argc < 2)
+    {
+        fprintf(stderr, "Provide device name\n");
+        exit(EXIT_FAILURE);
+    }
 
-    if (!(interface_index = if_nametoindex(INTERFACE_NAME))) {
+    void *packet_buffer;
+    strncpy(interface_name, argv[1], sizeof(interface_name));
+
+    if (!(interface_index = if_nametoindex(interface_name)))
+    {
         perror("Failed to get device index");
+        exit(EXIT_FAILURE);
     }
 
     struct rlimit rlim = {RLIM_INFINITY, RLIM_INFINITY};
@@ -177,7 +186,7 @@ static struct xsk_socket_info *xsk_configure_socket(struct xsk_umem_info *umem)
     xsk_cfg.xdp_flags = XDP_FLAGS;
     xsk_cfg.bind_flags = XDP_BIND_FLAGS;
     xsk_cfg.libbpf_flags = 0;
-    ret = xsk_socket__create(&xsk_info->xsk, INTERFACE_NAME,
+    ret = xsk_socket__create(&xsk_info->xsk, interface_name,
                              INTERFACE_QUEUE_INDEX, umem->umem, &xsk_info->rx,
                              &xsk_info->tx, &xsk_cfg);
     if (ret)
