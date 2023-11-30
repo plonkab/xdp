@@ -1,0 +1,4 @@
+[submodule "libbpf"]
+	path = lib/xdp-tools
+	url = git@github.com:xdp-project/xdp-tools.git
+	ignore = untracked
