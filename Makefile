@@ -27,7 +27,7 @@ all: lib simple_xdp af_xdp af_tx
 
 simple_xdp: simple_xdp_user simple_xdp_kern;
 
-af_xdp: af_xdp_kern af_xdp_user xsk_def_xdp_prog;
+af_xdp: af_xdp_user af_xdp_kern;
 
 lib: libbpf libxdp;
 
@@ -62,15 +62,10 @@ af_xdp_kern: % : %.o;
 af_xdp_kern.o: %.o : %.c
 	$(Q)$(CLANG) -g -O2 -Wall -target bpf -c $< -o $@
 
-xsk_def_xdp_prog: % : %.o;
-
-xsk_def_xdp_prog.o: %.o : %.c
-	$(Q)$(CLANG) -I $(LIB_INSTALL_INCLUDE) -g -O2 -Wall -target bpf -c $< -o $@
-
 af_tx: % : %.c
 	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
 
-clean: clean_simple_xdp clean_af_xdp
+clean: clean_simple_xdp clean_af_xdp clean_af_tx
 	$(Q)rm -f $(LIB_XDP_OBJ)
 	$(Q)rm -f $(LIB_BPF_OBJ)
 	$(Q)$(MAKE) -C $(LIB_XDP_DIR) clean
@@ -84,3 +79,6 @@ clean_simple_xdp:
 clean_af_xdp:
 	$(Q)rm -f af_xdp_user
 	$(Q)rm -f af_xdp_kern.o
+
+clean_af_tx:
+	$(Q)rm -f af_tx
