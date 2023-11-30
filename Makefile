@@ -46,8 +46,8 @@ simple_xdp_user: % : %.c lib
 
 simple_xdp_kern: % : %.o;
 
-simple_xdp_kern.o: %.o : %.c
-	$(Q)$(CLANG) -g -O2 -Wall -target bpf -c $< -o $@
+simple_xdp_kern.o: %.o : %.c libxdp
+	$(Q)$(CLANG) -g -O2 -Wall -target bpf -I $(LIB_INSTALL_INCLUDE) -c $< -o $@
 
 COMMON_OBJECTS = common/common_params.o common/common_user_bpf_xdp.o
 
@@ -59,8 +59,8 @@ af_xdp_user: %:%.c $(COMMON_OBJECTS)
 
 af_xdp_kern: % : %.o;
 
-af_xdp_kern.o: %.o : %.c
-	$(Q)$(CLANG) -g -O2 -Wall -target bpf -c $< -o $@
+af_xdp_kern.o: %.o : %.c libxdp
+	$(Q)$(CLANG) -g -O2 -Wall -target bpf -I $(LIB_INSTALL_INCLUDE)  -c $< -o $@
 
 af_tx: % : %.c
 	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
