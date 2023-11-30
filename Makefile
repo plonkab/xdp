@@ -6,7 +6,7 @@ Q = @
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-CC_FLAGS = -g -Werror -Wall -fPIC
+CC_FLAGS = -g -Wall -fPIC
 
 LIB_DIR := $(ROOT_DIR)/lib/
 LIB_INSTALL := $(LIB_DIR)/install/
@@ -23,11 +23,11 @@ export LIBBPF_DIR := $(LIB_BPF_DIR)/..
 export LIBBPF_INCLUDE_DIR := $(LIB_INSTALL_INCLUDE)
 export LIBBPF_UNBUILT := 1
 
-all: lib simple_xdp af_xdp 
+all: lib simple_xdp af_xdp af_tx
 
 simple_xdp: simple_xdp_user simple_xdp_kern;
 
-af_xdp: af_xdp_kern af_xdp_user;
+af_xdp: af_xdp_kern af_xdp_user xsk_def_xdp_prog;
 
 lib: libbpf libxdp;
 
@@ -47,7 +47,7 @@ simple_xdp_user: % : %.c lib
 simple_xdp_kern: % : %.o;
 
 simple_xdp_kern.o: %.o : %.c
-	$(CLANG) -g -Wall -target bpf -c $< -o $@
+	$(Q)$(CLANG) -g -O2 -Wall -target bpf -c $< -o $@
 
 COMMON_OBJECTS = common/common_params.o common/common_user_bpf_xdp.o
 
@@ -60,7 +60,15 @@ af_xdp_user: %:%.c $(COMMON_OBJECTS)
 af_xdp_kern: % : %.o;
 
 af_xdp_kern.o: %.o : %.c
-	$(Q)$(CLANG)  -g -Wall -target bpf -c $< -o $@
+	$(Q)$(CLANG) -g -O2 -Wall -target bpf -c $< -o $@
+
+xsk_def_xdp_prog: % : %.o;
+
+xsk_def_xdp_prog.o: %.o : %.c
+	$(Q)$(CLANG) -I $(LIB_INSTALL_INCLUDE) -g -O2 -Wall -target bpf -c $< -o $@
+
+af_tx: % : %.c
+	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
 
 clean: clean_simple_xdp clean_af_xdp
 	$(Q)rm -f $(LIB_XDP_OBJ)

@@ -9,6 +9,74 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/simple_xdp_user",
+            "args": [
+                "af_xdp_kern.o",
+                "xdp"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [
+                {
+                    "name": "LIBXDP_SKIP_DISPATCHER",
+                    "value": "1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb.sh",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "AF XDP",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/af_xdp_user",
+            "args": [
+                "--dev",
+                "lo",
+                "--skb-mode",
+                // "--filename=${workspaceRoot}/xsk_def_xdp_prog.o"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [
+                {
+                    "name": "LIBXDP_SKIP_DISPATCHER",
+                    "value": "1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb.sh",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "AF TX",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/af_tx",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
