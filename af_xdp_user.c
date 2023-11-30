@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 
+#define _POSIX_C_SOURCE 200112L
+#define _DEFAULT_SOURCE
+
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
