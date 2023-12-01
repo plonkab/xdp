@@ -49,7 +49,7 @@ simple_xdp_kern: % : %.o;
 simple_xdp_kern.o: %.o : %.c libxdp
 	$(Q)$(CLANG) -g -O2 -Wall -target bpf -I $(LIB_INSTALL_INCLUDE) -c $< -o $@
 
-COMMON_OBJECTS = common/common_params.o common/common_user_bpf_xdp.o
+COMMON_OBJECTS = common/common_params.o common/common_user_bpf_xdp.o common/af_common.o
 
 $(COMMON_OBJECTS): %.o : %.c %.h
 	$(Q)$(MAKE) -C common LIB_INSTALL_INCLUDE=$(LIB_INSTALL_INCLUDE)
@@ -62,7 +62,9 @@ af_xdp_kern: % : %.o;
 af_xdp_kern.o: %.o : %.c libxdp
 	$(Q)$(CLANG) -g -O2 -Wall -target bpf -I $(LIB_INSTALL_INCLUDE)  -c $< -o $@
 
-af_tx: % : %.c
+af_tx: % : %.c $(COMMON_OBJECTS)
+	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
+
 	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
 
 clean: clean_simple_xdp clean_af_xdp clean_af_tx
