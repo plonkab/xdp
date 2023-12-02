@@ -77,6 +77,11 @@ void xsk_free_umem_frame(struct xsk_socket_info *xsk, uint64_t frame)
     xsk->umem_frame_addr[xsk->umem_frame_free++] = frame;
 }
 
+uint64_t xsk_umem_free_frames(struct xsk_socket_info *xsk)
+{
+	return xsk->umem_frame_free;
+}
+
 static struct xsk_umem_info *configure_xsk_umem(void *buffer, uint64_t size)
 {
     struct xsk_umem_info *umem;

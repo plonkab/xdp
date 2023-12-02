@@ -2,5 +2,6 @@ lib/install/
 .vscode/settings.json
 *.o
 af_tx
+af_rx
 af_xdp_user
 simple_xdp_user

@@ -31,3 +31,4 @@ struct xsk_socket_info *create_socket(const char *const interface_name, const un
                                       const uint32_t xdp_flags, const uint16_t bind_flags);
 uint64_t xsk_alloc_umem_frame(struct xsk_socket_info *xsk);
 void xsk_free_umem_frame(struct xsk_socket_info *xsk, uint64_t frame);
+uint64_t xsk_umem_free_frames(struct xsk_socket_info *xsk);

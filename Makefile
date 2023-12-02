@@ -23,7 +23,7 @@ export LIBBPF_DIR := $(LIB_BPF_DIR)/..
 export LIBBPF_INCLUDE_DIR := $(LIB_INSTALL_INCLUDE)
 export LIBBPF_UNBUILT := 1
 
-all: lib simple_xdp af_xdp af_tx
+all: lib simple_xdp af_xdp af_tx af_rx
 
 simple_xdp: simple_xdp_user simple_xdp_kern;
 
@@ -51,7 +51,7 @@ simple_xdp_kern.o: %.o : %.c libxdp
 
 COMMON_OBJECTS = common/common_params.o common/common_user_bpf_xdp.o common/af_common.o
 
-$(COMMON_OBJECTS): %.o : %.c %.h
+$(COMMON_OBJECTS): %.o : %.c %.h lib
 	$(Q)$(MAKE) -C common LIB_INSTALL_INCLUDE=$(LIB_INSTALL_INCLUDE)
 
 af_xdp_user: %:%.c $(COMMON_OBJECTS)
@@ -65,9 +65,10 @@ af_xdp_kern.o: %.o : %.c libxdp
 af_tx: % : %.c $(COMMON_OBJECTS)
 	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
 
+af_rx: % : %.c $(COMMON_OBJECTS)
 	$(Q)$(CC) $(CC_FLAGS) -I $(LIB_INSTALL_INCLUDE) -L $(LIB_INSTALL_LIB) -o $@ $? -l:libxdp.a -l:libbpf.a -lelf -lz
 
-clean: clean_simple_xdp clean_af_xdp clean_af_tx
+clean: clean_simple_xdp clean_af_xdp clean_af_tx clean_af_rx
 	$(Q)rm -f $(LIB_XDP_OBJ)
 	$(Q)rm -f $(LIB_BPF_OBJ)
 	$(Q)$(MAKE) -C $(LIB_XDP_DIR) clean
@@ -83,4 +84,7 @@ clean_af_xdp:
 	$(Q)rm -f af_xdp_kern.o
 
 clean_af_tx:
+	$(Q)rm -f af_tx
+
+clean_af_rx:
 	$(Q)rm -f af_tx
